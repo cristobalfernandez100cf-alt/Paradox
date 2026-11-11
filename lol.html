@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paradox</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-image: url('fd.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Contenedor principal */
+    .grid-container {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(92vw, 640px);
+      height: 450px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      column-gap: 20px;
+      z-index: 2;
+    }
+
+    /* Tarjetas de los personajes */
+    .char-card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .char-card:hover {
+      transform: scale(1.08);
+    }
+
+    .char-card:active {
+      transform: scale(0.92);
+    }
+
+    /* Animación de rebote */
+    .bounce {
+      animation: pop 0.4s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.25) rotate(5deg); }
+      100% { transform: scale(1); }
+    }
+
+    .char-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    }
+
+    /* 1. PARADOX (Arriba) */
+    .pos-top {
+      grid-column: 2 / span 2;
+      grid-row: 1;
+    }
+    .pos-top .char-img {
+      transform: scale(1.0);
+    }
+
+    /* 2. PARADOX2 (Izquierda) */
+    .pos-left {
+      grid-column: 1;
+      grid-row: 2;
+      transform: translateX(-25px);
+    }
+    .pos-left .char-img {
+      transform: scale(1.3);
+    }
+
+    /* 3. PARADOX1 (Derecha): Movido bastante a la derecha y con gran tamaño */
+    .pos-right {
+      grid-column: 3;
+      grid-row: 2;
+      transform: translateX(90px);
+    }
+    .pos-right .char-img {
+      transform: scale(1.45);
+    }
+
+    /* 4. BURGER: Desplazado al máximo hacia la derecha */
+    .pos-burger {
+      grid-column: 4;
+      grid-row: 2;
+      transform: translateX(160px);
+    }
+    .pos-burger .char-img {
+      transform: scale(1.15);
+    }
+
+    /* 5. ABAJO (new1) */
+    .pos-bottom {
+      grid-column: 2 / span 2;
+      grid-row: 3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid-container">
+    <!-- ARRIBA: paradox -->
+    <div class="char-card pos-top" onclick="playSuperLoudAudio('linga guliguli', this)">
+      <img src="paradox.png" alt="paradox" class="char-img">
+    </div>
+
+    <!-- IZQUIERDA: paradox2 -->
+    <div class="char-card pos-left" onclick="playSuperLoudAudio('cafecito', this)">
+      <img src="paradox2.png" alt="paradox2" class="char-img">
+    </div>
+
+    <!-- DERECHA: paradox1 -->
+    <div class="char-card pos-right" onclick="playAudio('king nasir dance', this)">
+      <img src="paradox1.png" alt="paradox1" class="char-img">
+    </div>
+
+    <!-- BURGER -->
+    <div class="char-card pos-burger" onclick="playAudio('ki', this)">
+      <img src="burger.png" alt="burger" class="char-img">
+    </div>
+
+    <!-- ABAJO: new1 -->
+    <div class="char-card pos-bottom" onclick="playAudio('gemi2', this)">
+      <img src="new1.png" alt="new1" class="char-img">
+    </div>
+  </div>
+
+  <script>
+    function playAudio(soundName, element) {
+      triggerBounce(element);
+      const extensions = ['.mp3', '.wav', '.m4a', '.ogg'];
+      function tryPlay(index) {
+        if (index >= extensions.length) return;
+        const audio = new Audio(soundName + extensions[index]);
+        audio.play().catch(() => { tryPlay(index + 1); });
+      }
+      tryPlay(0);
+    }
+
+    function playSuperLoudAudio(soundName, element) {
+      triggerBounce(element);
+      const extensions = ['.mp3', '.wav', '.m4a', '.ogg'];
+      function tryPlay(index) {
+        if (index >= extensions.length) return;
+        const path = soundName + extensions[index];
+        const audio1 = new Audio(path);
+        const audio2 = new Audio(path);
+        const audio3 = new Audio(path);
+        audio1.play().then(() => {
+          audio2.play().catch(() => {});
+          audio3.play().catch(() => {});
+        }).catch(() => { tryPlay(index + 1); });
+      }
+      tryPlay(0);
+    }
+
+    function triggerBounce(element) {
+      element.classList.remove('bounce');
+      void element.offsetWidth;
+      element.classList.add('bounce');
+    }
+  </script>
+</body>
+</html>
